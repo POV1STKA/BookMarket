@@ -1,0 +1,248 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: This is API for book market
+  version: "1.0.0"
+  title: Big Book Market
+tags:
+  - name: customers
+    description: Operations available to every customer
+paths:
+  /v1/products:
+    get:
+      tags:
+        - customers
+      summary: gets all products
+      responses:
+        '200':
+          description: all products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: there are no resources
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - customers
+      summary: create new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductNoId'
+      parameters:
+        - in: header
+          name: customerId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '201':
+          description: product created
+          headers:
+            Location:
+              schema:
+                type: string
+                example: '/v1/products/d290f1ee-6c54-4b01-90e6-d701748f0851'
+              description: uri of new product
+        '400':
+          description: invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: resource already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/products/{id}:
+    get:
+      tags:
+        - customers
+      summary: get specific product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: product by uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: no such product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - customers
+      summary: update specific product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: customerId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductNoId'
+      responses:
+        '200':
+          description: successfully updated
+        '400':
+          description: incorrect request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - customers
+      summary: delete specific product
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: customerId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: successfully deleted
+        '403':
+          description: unable to delete, lack of rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ProductNoId:
+      type: object
+      required:
+        - title
+        - author
+        - price
+        - count
+        - genre
+      properties:
+        title:
+          type: string
+          example: Animal Farm
+          minLength: 2
+          maxLength: 50
+        description:
+          type: string
+          example: The tale depicts the evolution of a society of animals driven from a cattle yard by its previous owner
+          minLength: 20
+          maxLength: 500
+        author:
+          type: string
+          example: George Orwell
+          minLength: 2
+          maxLength: 50
+        price:
+          type: integer
+          example: 100
+          minimum: 0
+          maximum: 999999
+        count:
+          type: integer
+          example: 2
+          description: amount of products remained
+          minimum: 0
+          maximum: 10000
+        genre:
+          type: string
+          example: Parable
+          minLength: 2
+          maxLength: 50
+    Product:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - price
+        - count
+        - genre
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Animal Farm
+          minLength: 2
+          maxLength: 50
+        description:
+          type: string
+          example: The tale depicts the evolution of a society of animals driven from a cattle yard by its previous owner
+          minLength: 20
+          maxLength: 500
+        author:
+          type: string
+          example: George Orwell
+          minLength: 2
+          maxLength: 50
+        price:
+          type: integer
+          example: 100
+          minimum: 0
+          maximum: 999999
+        genre:
+          type: string
+          example: Parable
+          minLength: 2
+          maxLength: 50
+    Error:
+      type: object
+      required:
+        - status
+        - error
+        - message
+        - path
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          example: |
+            Validation failed for object 'ProductDTO': 
+            Field 'price' must be greater than 0.
+        path:
+          type: string
+          example: /v1/products
