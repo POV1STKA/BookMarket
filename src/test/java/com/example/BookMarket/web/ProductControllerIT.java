@@ -41,13 +41,16 @@ import org.springframework.test.web.servlet.MockMvc;
 @Import({MappersTestConfiguration.class, ExceptionTranslator.class})
 @DisplayName("Product Controller IT")
 public class ProductControllerIT {
-    @MockBean private ProductService productService;
+    @MockBean
+    private ProductService productService;
 
-    @Autowired private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Autowired private ProductMapper productMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
-    private static Genre genre = Genre.builder().id(1).name("Space Food").build();
+    private static Genre genre = Genre.builder().id(UUID.randomUUID()).name("Novel").build();
     private static Customer customer =
             Customer.builder()
                     .id(1L)

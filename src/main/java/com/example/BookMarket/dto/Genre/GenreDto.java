@@ -5,12 +5,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
+import java.util.UUID;
 
 @Value
 @Builder
 @Jacksonized
 public class GenreDto {
-    int id;
+    UUID id;
 
     @NotBlank(message = "Genre name could not be blank")
     @Size(min = 2, message = "Genre name could not be shorter than 2 characters")

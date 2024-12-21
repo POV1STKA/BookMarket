@@ -99,11 +99,11 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = new ArrayList<>();
 
         Genre Detective = Genre.builder()
-                .id(0)
+                .id(UUID.randomUUID())
                 .name("Detective")
                 .build();
         Genre Parable = Genre.builder()
-                .id(1)
+                .id(UUID.randomUUID())
                 .name("Parable")
                 .build();
 
