@@ -6,6 +6,7 @@ import com.example.BookMarket.service.exception.CustomerNotFoundException;
 import com.example.BookMarket.service.exception.ProductAlreadyExistsException;
 import com.example.BookMarket.service.exception.ProductNotFoundException;
 import com.example.BookMarket.service.exception.ProductsNotFoundException;
+import com.example.BookMarket.featureToggle.exception.FeatureNotAvailableException;
 import com.example.BookMarket.util.ProblemDetailsUtils;
 import com.example.BookMarket.web.exception.ParamsViolationDetails;
 import java.util.List;
@@ -95,4 +96,13 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ProblemDetailsUtils.getValidationErrorsBody(validationResponse, path));
     }
+
+    @ExceptionHandler(FeatureNotAvailableException.class)
+    ResponseEntity<Map<String, Object>> handleFeatureNotAvailableException(
+            FeatureNotAvailableException ex, WebRequest request) {
+        log.info("Feature is not enabled");
+        return ProblemDetailsUtils.getErrorResponseEntity(
+                HttpStatus.NOT_FOUND, "feature-disabled", request, ex.getMessage());
+    }
+
 }

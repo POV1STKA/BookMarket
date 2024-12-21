@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: BookMarket
+
+application:
+  feature:
+    toggles:
+      vipUsers: true
+      topBooks: true
